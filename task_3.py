@@ -1,7 +1,6 @@
 
 ''' script for filling university locations based on dataset provided '''
 
-import json
 import requests
 import pandas as pd
 from iso3166 import countries
@@ -11,11 +10,11 @@ from config import api_key # saved the api key in a config file and imported it
 df = pd.read_csv("university-names.csv")
 
 # place api url for getting the place id of the univeristy searched
-place_url = "https://maps.googleapis.com/maps/api/place/textsearch/json?"
+PLACE_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json?"
 
 # place details api url for getting more details on the university
 # serached using the place id gotten from place api url
-details_url = "https://maps.googleapis.com/maps/api/place/details/json?"
+DETAILS_URL = "https://maps.googleapis.com/maps/api/place/details/json?"
 
 # create  a column for the locations
 df["location"] = None
@@ -30,7 +29,7 @@ for i in range(0, len(df)):
     region = countries.get(df.iat[i, 2]).alpha2
 
     # GET request on places api
-    place_response = requests.get(place_url + 'query=' \
+    place_response = requests.get(PLACE_URL + 'query=' \
         + query + '&key=' + api_key  + \
             '&region=' + region)
 
@@ -45,7 +44,7 @@ for i in range(0, len(df)):
         place_id = data['results'][0]['place_id']
 
         #GET request using the place id gotten from places api
-        details_response = requests.get(details_url + 'place_id=' + place_id + '&key=' + api_key)
+        details_response = requests.get(DETAILS_URL + 'place_id=' + place_id + '&key=' + api_key)
         details_data = details_response.json()
 
         # obtain address details from place details response
